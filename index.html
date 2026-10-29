@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NSB Orange Indoor Schedule</title>
+<meta name="description" content="Match schedule for the 2026 Hockey NSW U14 Indoor State Championships, PCYC Orange, 30 Oct – 2 Nov. Filter by association, team and day.">
+<meta name="theme-color" content="#111111">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NSB Hockey">
+<meta property="og:title" content="NSB · U14 Indoor State Championships">
+<meta property="og:description" content="Match schedule · PCYC Orange · 30 Oct – 2 Nov 2026. Filter by association, team and day.">
+<meta property="og:url" content="https://devjohninsydney.github.io/nsb-indoor-schedule/">
+<meta property="og:image" content="https://devjohninsydney.github.io/nsb-indoor-schedule/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="NSB hockey logo and U14 Indoor State Championships match schedule">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  :root { color-scheme: light; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
+<style>
+  /* Layout: one narrow column that reads like a printed draw sheet.
+     NSB black-and-yellow header, stacked filters, then matches under sticky day headings.
+     Selected teams render as black pills with a yellow dot. */
+  :root {
+    --bg: #F1F1F0;
+    --surface: #FFFFFF;
+    --ink: #111111;
+    --muted: #5E5E5E;
+    --line: #DCDCDA;
+    --brand: #FCED04;
+    --boys: #1E6BD6;
+    --girls: #D1336B;
+    --red: #D3262E;
+    --sel-bg: #111111;
+    --sel-fg: #FFFFFF;
+    --band: #111111;
+    --band-fg: #FFFFFF;
+    --band-muted: #B5B5B2;
+    --font-display: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+    --font-body: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0D0D0D; --surface: #1A1A1A; --ink: #F2F2F0; --muted: #A5A5A2; --line: #2F2F2E;
+      --boys: #6AA8FF; --girls: #FF7DAE; --sel-bg: #2C2C2B; --sel-fg: #FFFFFF; --band: #000000;
+      --band-muted: #A5A5A2; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0D0D0D; --surface: #1A1A1A; --ink: #F2F2F0; --muted: #A5A5A2; --line: #2F2F2E;
+    --boys: #6AA8FF; --girls: #FF7DAE; --sel-bg: #2C2C2B; --sel-fg: #FFFFFF; --band: #000000;
+    --band-muted: #A5A5A2; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.35; margin: 0; }
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+  .wrap { max-width: 680px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+  .band { background: var(--band); color: var(--band-fg); padding-block: 16px 20px; }
+  .stripe { height: 6px; background: var(--brand); }
+  .brand { display: inline-flex; align-items: center; gap: 12px; color: var(--band-fg); text-decoration: none; margin-bottom: 16px; max-width: 100%; }
+  .logo { height: 58px; width: auto; flex: none; background: #FFFFFF; border-radius: 12px; padding: 4px 8px; }
+  .mono { font-family: var(--font-display); font-weight: 700; font-size: 20px; letter-spacing: .04em; background: var(--brand); color: #111111; border-radius: 6px; padding: 4px 8px 3px; line-height: 1; flex: none; }
+  .bn { font-family: var(--font-display); font-weight: 600; font-size: 16px; letter-spacing: .08em; text-transform: uppercase; line-height: 1.1; }
+  .brand:hover .bn { text-decoration: underline; }
+  .eyebrow { font-family: var(--font-display); font-weight: 600; font-size: 14px; letter-spacing: .14em; text-transform: uppercase; color: var(--band-muted); margin: 0 0 4px; }
+  h1 { font-family: var(--font-display); font-weight: 700; font-size: 40px; line-height: 1; margin: 0 0 8px; text-wrap: balance; letter-spacing: .005em; }
+  .band p.sub { margin: 0; color: var(--band-muted); font-size: 15px; }
+  .band p.sub strong { color: var(--band-fg); font-weight: 600; }
+
+  main { padding-block: 16px 40px; }
+  .filters { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 12px; }
+  .field { display: grid; gap: 5px; min-width: 0; }
+  .field > label, .field > .lab { font-family: var(--font-display); font-weight: 600; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  .field > label span { display: inline-block; min-width: 18px; padding: 0 4px; margin-right: 4px; text-align: center; background: var(--brand); color: #111111; border-radius: 3px; }
+  select { width: 100%; min-width: 0; font: 500 16px/1.25 var(--font-body); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 12px 8px 12px 12px; min-height: 48px; text-overflow: clip; }
+  select:focus-visible, button:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+  select:disabled { opacity: .5; }
+
+  .days { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+  .chip { font: 600 15px/1 var(--font-display); letter-spacing: .05em; text-transform: uppercase; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 9px 2px 8px; cursor: pointer; display: grid; gap: 3px; justify-items: center; min-height: 52px; }
+  .chip small { font: 500 12px var(--font-body); letter-spacing: 0; text-transform: none; color: var(--muted); }
+  .chip[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: #111111; }
+  .chip[aria-pressed="true"] small { color: #111111; opacity: .75; }
+  .chip:disabled { opacity: .4; cursor: default; }
+
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: 8px 12px; flex-wrap: wrap; margin: 14px 0 4px; min-height: 36px; }
+  #count { font-weight: 600; font-size: 15px; }
+  .acts { display: flex; gap: 12px; flex-wrap: wrap; }
+  .link { font: 600 15px var(--font-body); color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 2px; text-decoration-color: var(--brand); background: none; border: 0; padding: 8px 2px; cursor: pointer; }
+  .link[hidden] { display: none; }
+
+  .day { margin-top: 6px; }
+  .dayhead { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 12px 0 8px; border-bottom: 2px solid var(--ink); }
+  .dayhead h2 { font-family: var(--font-display); font-weight: 700; font-size: 26px; line-height: 1; margin: 0; text-transform: uppercase; letter-spacing: .03em; }
+  .dayhead h2 small { font-weight: 500; font-size: 17px; color: var(--muted); letter-spacing: .02em; margin-left: 6px; text-transform: none; }
+  .dayhead .n { font-size: 14px; color: var(--muted); white-space: nowrap; }
+  .list { display: grid; gap: 0; }
+  .m { display: grid; grid-template-columns: 62px minmax(0, 1fr) 54px; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .m.done { opacity: .55; }
+  .time { font-family: var(--font-display); font-variant-numeric: tabular-nums; line-height: 1; }
+  .time .hm { font-size: 27px; font-weight: 600; display: block; }
+  .time .ap { font-size: 13px; font-weight: 600; color: var(--muted); letter-spacing: .1em; }
+  .teams { display: grid; gap: 1px; min-width: 0; }
+  .team { display: flex; align-items: center; min-width: 0; font-weight: 500; font-size: 16.5px; line-height: 1.25; padding-block: 1px; }
+  .team .v { flex: none; width: 14px; color: var(--muted); font-weight: 500; font-size: 13px; }
+  .nm { min-width: 0; overflow-wrap: anywhere; }
+  .nm.sel { display: inline-flex; align-items: center; gap: 7px; background: var(--sel-bg); color: var(--sel-fg); font-weight: 600; border-radius: 999px; padding: 3px 12px 3px 9px; margin-left: -1px; }
+  .nm.sel::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--brand); flex: none; }
+  .tbc .team { color: var(--muted); font-style: italic; }
+  .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 5px; font-size: 13.5px; color: var(--muted); }
+  .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex: none; }
+  .dot.B { background: var(--boys); } .dot.G { background: var(--girls); }
+  .tag { font: 600 11.5px var(--font-display); letter-spacing: .1em; text-transform: uppercase; border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px; color: var(--muted); }
+  .tag.live { background: var(--red); border-color: var(--red); color: #fff; }
+  .court { justify-self: end; text-align: center; border: 2px solid var(--ink); border-radius: 8px; width: 50px; padding: 4px 0 3px; font-family: var(--font-display); line-height: 1; }
+  .court .l { display: block; font-size: 11px; letter-spacing: .14em; font-weight: 600; color: var(--muted); }
+  .court .n { display: block; font-size: 28px; font-weight: 700; }
+
+  .empty { text-align: center; padding: 40px 12px; color: var(--muted); display: grid; gap: 4px; justify-items: center; }
+  .empty strong { color: var(--ink); font-size: 18px; }
+
+  footer { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; display: grid; gap: 10px; }
+  footer h3 { font-family: var(--font-display); font-size: 14px; letter-spacing: .12em; text-transform: uppercase; margin: 0; color: var(--ink); }
+  footer ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 2px; }
+  footer p { margin: 0; }
+  footer a { color: var(--ink); text-decoration-color: var(--brand); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+</head>
+<body>
+<header>
+  <div class="band">
+    <div class="wrap">
+      <a class="brand" href="https://nsbhockey.com.au/" target="_blank" rel="noopener"><img class="logo" src="nsb-logo.png" alt="NSB hockey logo" width="300" height="233"><span class="bn">Northern Sydney &amp; Beaches Hockey</span></a>
+      <p class="eyebrow">Hockey NSW · U14 Boys &amp; Girls</p>
+      <h1>Indoor State Championships</h1>
+      <p class="sub"><strong>PCYC Orange</strong> · Fri 30 Oct – Mon 2 Nov 2026</p>
+    </div>
+  </div>
+  <div class="stripe" aria-hidden="true"></div>
+</header>
+
+<main class="wrap">
+  <section class="filters" aria-label="Filter the schedule">
+    <div class="field"><label for="assoc"><span>1</span> Association</label><select id="assoc"></select></div>
+    <div class="field"><label for="gender"><span>2</span> Girls / Boys</label><select id="gender"></select></div>
+    <div class="field"><label for="team"><span>3</span> Team</label><select id="team"></select></div>
+    <div class="field"><span class="lab" id="daylab">Day</span><div class="days" id="days" role="group" aria-labelledby="daylab"></div></div>
+  </section>
+
+  <div class="bar">
+    <span id="count" aria-live="polite"></span>
+    <div class="acts">
+      <button class="link" id="fin" type="button" hidden></button>
+      <button class="link" id="clear" type="button" hidden>Clear filters</button>
+    </div>
+  </div>
+  <div id="results"></div>
+
+  <footer>
+    <div>
+      <h3>Courts</h3>
+      <ul>
+        <li>Court 1 · Grandstand side</li>
+        <li>Court 2 · Middle</li>
+        <li>Court 3 · End</li>
+      </ul>
+    </div>
+    <p>Finished matches are hidden automatically (Sydney time). Semi-finals, finals and play-offs are filled in from pool results, so those rows show positions until the pools finish. Compiled from the published Hockey NSW draw. NSB: <a href="https://nsbhockey.com.au/" target="_blank" rel="noopener">nsbhockey.com.au</a></p>
+  </footer>
+</main>
+
+<script>
+/*DATA-START*/
+const RAW = `
+F|10:00 AM|B1A|1|1|Southern Highlands 1|Orange 1
+F|10:00 AM|B1A|1|2|Goulburn 1|North West Sydney 1
+F|10:00 AM|B3A|1|3|Tamworth|Orange 2
+F|10:40 AM|B1B|1|1|Newcastle 1|Northern Sydney & Beaches 1
+F|10:40 AM|B2A|1|2|Hunter|North West Sydney 2
+F|10:40 AM|B3A|1|3|Northern Sydney & Beaches 3|Central Coast
+F|11:20 AM|B1B|1|1|Hockey New England|Illawarra South Coast 2
+F|11:20 AM|B2A|1|2|Northern Sydney & Beaches 2|Goulburn 2
+F|11:20 AM|B3B|1|3|Lithgow|Newcastle 2
+F|12:00 PM|B1A|2|1|North West Sydney 1|Illawarra South Coast 1
+F|12:00 PM|B2B|1|2|Illawarra South Coast 3|Sydney South
+F|12:00 PM|B3B|1|3|Metro South West 3|Wagga Wagga
+F|12:40 PM|B1A|2|1|Southern Highlands 1|Goulburn 1
+F|12:40 PM|B2B|1|2|Parkes|Metro South West 2
+F|12:40 PM|B3A|2|3|Orange 2|Bathurst
+F|1:20 PM|B1B|2|1|Northern Sydney & Beaches 1|Metro South West 1
+F|1:20 PM|B2A|2|2|North West Sydney 2|Goulburn 2
+F|1:20 PM|B3A|2|3|Northern Sydney & Beaches 3|Tamworth
+F|2:00 PM|B1B|2|1|Hockey New England|Newcastle 1
+F|2:00 PM|B2A|2|2|Hunter|Northern Sydney & Beaches 2
+F|2:00 PM|B3B|2|3|Newcastle 2|Wagga Wagga
+F|2:40 PM|B1A|4|1|Orange 1|Illawarra South Coast 1
+F|2:40 PM|B2B|2|2|Illawarra South Coast 3|Metro South West 2
+F|2:40 PM|B3B|2|3|Lithgow|Metro South West 3
+F|3:20 PM|B1B|4|1|Illawarra South Coast 2|Metro South West 1
+F|3:20 PM|B2B|2|2|Sydney South|Parkes
+F|3:20 PM|B3A|4|3|Central Coast|Bathurst
+S|8:00 AM|B1B|3|1|Hockey New England|Metro South West 1
+S|8:00 AM|B2B|3|2|Parkes|Illawarra South Coast 3
+S|8:00 AM|B3B|3|3|Metro South West 3|Newcastle 2
+S|8:40 AM|B1B|3|1|Newcastle 1|Illawarra South Coast 2
+S|8:40 AM|B2B|3|2|Metro South West 2|Sydney South
+S|8:40 AM|B3B|3|3|Wagga Wagga|Lithgow
+S|9:20 AM|B1A|3|1|Southern Highlands 1|Illawarra South Coast 1
+S|9:20 AM|B2A|3|2|Northern Sydney & Beaches 2|North West Sydney 2
+S|9:20 AM|B3A|3|3|Northern Sydney & Beaches 3|Bathurst
+S|10:00 AM|B1A|3|1|Goulburn 1|Orange 1
+S|10:00 AM|B2A|3|2|Goulburn 2|Hunter
+S|10:00 AM|B3A|3|3|Tamworth|Central Coast
+S|10:40 AM|B1B|5|1|Illawarra South Coast 2|Northern Sydney & Beaches 1
+S|10:40 AM|B2B|4|2|Ladder Position 1|Ladder Position 4
+S|10:40 AM|B3B|4|3|Ladder Position 1|Ladder Position 4
+S|11:20 AM|B1B|5|1|Metro South West 1|Newcastle 1
+S|11:20 AM|B2B|4|2|Ladder Position 2|Ladder Position 3
+S|11:20 AM|B3B|4|3|Ladder Position 2|Ladder Position 3
+S|12:00 PM|B1A|5|1|Orange 1|North West Sydney 1
+S|12:00 PM|B2A|4|2|Ladder Position 1|Ladder Position 4
+S|12:00 PM|B3A|5|3|Central Coast|Orange 2
+S|12:40 PM|B1A|5|1|Illawarra South Coast 1|Goulburn 1
+S|12:40 PM|B2A|4|2|Ladder Position 2|Ladder Position 3
+S|12:40 PM|B3A|5|3|Bathurst|Tamworth
+S|1:20 PM|B1B|4|1|Northern Sydney & Beaches 1|Hockey New England
+S|1:20 PM|G3A|1|2|Metro South West 2|Manning Valley
+S|1:20 PM|G3A|1|3|Lithgow 1|Newcastle 2
+S|2:00 PM|B1A|4|1|North West Sydney 1|Southern Highlands 1
+S|2:00 PM|G1B|4|2|Metro South West 1|Illawarra South Coast 1
+S|2:00 PM|B3A|4|3|Orange 2|Northern Sydney & Beaches 3
+S|2:40 PM|G1A|1|1|Hockey New England|Bathurst 1
+S|2:40 PM|G2A|1|2|Parkes|Port Macquarie Hastings
+S|2:40 PM|G3B|1|3|Illawarra South Coast 3|Lithgow 2
+S|3:20 PM|G1A|1|1|Goulburn 1|Sydney East 1
+S|3:20 PM|G2A|1|2|Northern Sydney & Beaches 3|Tamworth
+S|3:20 PM|G3B|1|3|Sydney East 3|Bathurst 2
+S|4:00 PM|G1B|1|1|Northern Sydney & Beaches 2|Newcastle 1
+S|4:00 PM|G2B|1|2|Southern Highlands|Illawarra South Coast 2
+S|4:00 PM|G3A|2|3|Newcastle 2|Manning Valley
+S|4:40 PM|G1B|1|1|Orange 1|Metro South West 1
+S|4:40 PM|G2B|1|2|Orange 2|Sydney East 2
+S|4:40 PM|G3A|2|3|Lithgow 1|Metro South West 2
+S|5:20 PM|G1A|2|1|Bathurst 1|Northern Sydney & Beaches 1
+S|5:20 PM|G2A|2|2|Port Macquarie Hastings|North West Sydney
+S|5:20 PM|G3B|2|3|Lithgow 2|Bathurst 2
+S|6:00 PM|G1A|2|1|Goulburn 1|Hockey New England
+S|6:00 PM|G2A|2|2|Northern Sydney & Beaches 3|Parkes
+S|6:00 PM|G3B|2|3|Illawarra South Coast 3|Sydney East 3
+S|6:40 PM|G1B|2|1|Newcastle 1|Illawarra South Coast 1
+S|6:40 PM|G2B|2|2|Illawarra South Coast 2|Sydney East 2
+S|6:40 PM|G2B|2|3|Southern Highlands|Orange 2
+S|7:20 PM|G1B|2|1|Orange 1|Northern Sydney & Beaches 2
+S|7:20 PM|G1A|4|2|Sydney East 1|Northern Sydney & Beaches 1
+S|7:20 PM|G2A|4|3|Tamworth|North West Sydney
+U|8:00 AM|B3|SF1|1|1st Pool A|2nd Pool B
+U|8:00 AM|B3|SF2|2|2nd Pool A|1st Pool B
+U|8:00 AM|B2|C|3|3rd Pool A|3rd Pool B
+U|8:40 AM|B2|SF1|1|1st Pool A|2nd Pool B
+U|8:40 AM|B2|SF2|2|2nd Pool A|1st Pool B
+U|8:40 AM|B3|C|3|4th Pool A|4th Pool B
+U|9:20 AM|B1|SF1|1|1st Pool A|2nd Pool B
+U|9:20 AM|B1|SF2|2|2nd Pool A|1st Pool B
+U|9:20 AM|B2|C|3|4th Pool A|4th Pool B
+U|10:00 AM|B1|C|1|5th Pool A|5th Pool B
+U|10:00 AM|B1|C|2|4th Pool A|4th Pool B
+U|10:00 AM|B3|C|3|3rd Pool A|3rd Pool B
+U|10:40 AM|B2|F|1|Winner SF 1|Winner SF 2
+U|10:40 AM|B3|F|2|5th Pool A|Loser 4 v 4
+U|10:40 AM|B1|C|3|3rd Pool A|3rd Pool B
+U|11:20 AM|B1|F|1|Winner SF 1|Winner SF 2
+U|11:20 AM|B3|F|2|Winner SF 1|Winner SF 2
+U|11:20 AM|G2A|3|3|Parkes|Tamworth
+U|12:40 PM|G1B|3|1|Orange 1|Illawarra South Coast 1
+U|12:40 PM|G1A|4|2|Bathurst 1|Goulburn 1
+U|12:40 PM|G3A|3|3|Metro South West 2|Newcastle 2
+U|1:20 PM|G1B|3|1|Northern Sydney & Beaches 2|Metro South West 1
+U|1:20 PM|G2A|3|2|Northern Sydney & Beaches 3|North West Sydney
+U|1:20 PM|G3A|3|3|Manning Valley|Lithgow 1
+U|2:00 PM|G1A|3|1|Hockey New England|Sydney East 1
+U|2:00 PM|G2B|3|2|Orange 2|Illawarra South Coast 2
+U|2:00 PM|G3B|3|3|Sydney East 3|Lithgow 2
+U|2:40 PM|G1A|3|1|Goulburn 1|Northern Sydney & Beaches 1
+U|2:40 PM|G2B|3|2|Sydney East 2|Southern Highlands
+U|2:40 PM|G3B|3|3|Bathurst 2|Illawarra South Coast 3
+U|3:20 PM|G1B|5|1|Metro South West 1|Newcastle 1
+U|3:20 PM|G2A|5|2|Tamworth|Port Macquarie Hastings
+U|3:20 PM|G3A|4|3|Ladder Position 1|Ladder Position 4
+U|4:00 PM|G1B|5|1|Illawarra South Coast 1|Northern Sydney & Beaches 2
+U|4:00 PM|G2A|5|2|North West Sydney|Parkes
+U|4:00 PM|G3A|4|3|Ladder Position 2|Ladder Position 3
+U|4:40 PM|G1A|5|1|Sydney East 1|Bathurst 1
+U|4:40 PM|G2B|4|2|Ladder Position 1|Ladder Position 4
+U|4:40 PM|G3B|4|3|Ladder Position 2|Ladder Position 3
+U|5:20 PM|G1A|5|1|Northern Sydney & Beaches 1|Hockey New England
+U|5:20 PM|G2B|4|2|Ladder Position 2|Ladder Position 3
+U|5:20 PM|G2A|4|3|Port Macquarie Hastings|Northern Sydney & Beaches 3
+U|6:00 PM|G1B|4|1|Newcastle 1|Orange 1
+U|6:00 PM|G3B|4|2|Ladder Position 1|Ladder Position 4
+M|8:00 AM|G3|SF1|1|1st Pool A|2nd Pool B
+M|8:00 AM|G3|SF2|2|2nd Pool A|1st Pool B
+M|8:00 AM|G2|C|3|4th Pool A|4th Pool B
+M|8:40 AM|G2|SF1|1|1st Pool A|2nd Pool B
+M|8:40 AM|G2|SF2|2|2nd Pool A|1st Pool B
+M|8:40 AM|G2|C|3|3rd Pool A|3rd Pool B
+M|9:20 AM|G1|SF1|1|1st Pool A|2nd Pool B
+M|9:20 AM|G1|SF2|2|2nd Pool A|1st Pool B
+M|9:20 AM|G1|C|3|3rd Pool A|3rd Pool B
+M|10:00 AM|G3|F|1|Winner SF 1|Winner SF 2
+M|10:00 AM|G1|C|2|4th Pool A|4th Pool B
+M|10:00 AM|G2|C|3|5th Pool A|Loser 4 v 4
+M|10:40 AM|G2|F|1|Winner SF 1|Winner SF 2
+M|10:40 AM|G1|C|2|5th Pool A|5th Pool B
+M|10:40 AM|G3|C|3|3rd Pool A|3rd Pool B
+M|11:20 AM|G1|F|1|Winner SF 1|Winner SF 2
+M|11:20 AM|G3|C|2|4th Pool A|4th Pool B
+`;
+
+const POOLS = {
+  B1A: ["Illawarra South Coast 1", "Southern Highlands 1", "Goulburn 1", "North West Sydney 1", "Orange 1"],
+  B1B: ["Metro South West 1", "Hockey New England", "Newcastle 1", "Northern Sydney & Beaches 1", "Illawarra South Coast 2"],
+  B2A: ["Hunter", "Northern Sydney & Beaches 2", "Goulburn 2", "North West Sydney 2"],
+  B2B: ["Illawarra South Coast 3", "Parkes", "Metro South West 2", "Sydney South"],
+  B3A: ["Bathurst", "Northern Sydney & Beaches 3", "Tamworth", "Orange 2", "Central Coast"],
+  B3B: ["Lithgow", "Metro South West 3", "Wagga Wagga", "Newcastle 2"],
+  G1A: ["Northern Sydney & Beaches 1", "Goulburn 1", "Hockey New England", "Bathurst 1", "Sydney East 1"],
+  G1B: ["Illawarra South Coast 1", "Orange 1", "Northern Sydney & Beaches 2", "Newcastle 1", "Metro South West 1"],
+  G2A: ["North West Sydney", "Northern Sydney & Beaches 3", "Parkes", "Port Macquarie Hastings", "Tamworth"],
+  G2B: ["Southern Highlands", "Orange 2", "Sydney East 2", "Illawarra South Coast 2"],
+  G3A: ["Lithgow 1", "Metro South West 2", "Manning Valley", "Newcastle 2"],
+  G3B: ["Illawarra South Coast 3", "Sydney East 3", "Bathurst 2", "Lithgow 2"]
+};
+/*DATA-END*/
+
+const DAYS = {
+  F: { name: "Friday", date: "30 October", short: "Fri", m: 9, d: 30 },
+  S: { name: "Saturday", date: "31 October", short: "Sat", m: 9, d: 31 },
+  U: { name: "Sunday", date: "1 November", short: "Sun", m: 10, d: 1 },
+  M: { name: "Monday", date: "2 November", short: "Mon", m: 10, d: 2 }
+};
+const DAY_ORDER = ["F", "S", "U", "M"];
+const GEN = { B: "Boys", G: "Girls" };
+const FIRST = ["Metro South West", "Northern Sydney & Beaches"];
+const DEFAULT_ASSOC = "Northern Sydney & Beaches";
+const SLOT = 40; // minutes each match slot runs
+
+const TEAMS = [];
+for (const [pool, list] of Object.entries(POOLS)) {
+  for (const name of list) {
+    TEAMS.push({ key: pool[0] + "|" + name, g: pool[0], name, assoc: name.replace(/ \d+$/, ""), pool, division: pool.slice(0, 2) });
+  }
+}
+const byKey = new Map(TEAMS.map(t => [t.key, t]));
+
+function toMins(t) {
+  const [hm, ap] = t.split(" "); let [h, m] = hm.split(":").map(Number);
+  if (ap === "PM" && h !== 12) h += 12; if (ap === "AM" && h === 12) h = 0;
+  return h * 60 + m;
+}
+// Wall-clock Sydney time as a comparable number (minutes-resolution, no timezone maths needed).
+function sydneyNow() {
+  try {
+    const p = new Intl.DateTimeFormat("en-AU", { timeZone: "Australia/Sydney", year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", hour12: false }).formatToParts(new Date());
+    const g = k => +p.find(x => x.type === k).value;
+    return Date.UTC(g("year"), g("month") - 1, g("day"), g("hour") % 24, g("minute"));
+  } catch (e) { return 0; }
+}
+const MATCHES = RAW.trim().split("\n").map((l, i) => {
+  const [d, time, div, rnd, court, a, b] = l.split("|");
+  const g = div[0];
+  const real = byKey.has(g + "|" + a) && byKey.has(g + "|" + b);
+  const mins = toMins(time);
+  return { i, d, time, div, rnd, court: +court, a, b, ph: !real, mins, t: Date.UTC(2026, DAYS[d].m, DAYS[d].d, 0, mins) };
+});
+const MS = 60000;
+
+const st = { assoc: DEFAULT_ASSOC, gender: "", team: "", day: "", finished: false };
+const $ = id => document.getElementById(id);
+function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+function matchingTeams() {
+  return TEAMS.filter(t => (!st.assoc || t.assoc === st.assoc) && (!st.gender || t.g === st.gender) && (!st.team || t.key === st.team));
+}
+
+function fillAssoc() {
+  const s = $("assoc"); s.replaceChildren(new Option("All associations", ""));
+  const all = [...new Set(TEAMS.map(t => t.assoc))].sort((a, b) => a.localeCompare(b));
+  const first = FIRST.filter(a => all.includes(a));
+  first.forEach(a => s.append(new Option(a, a)));
+  const sep = new Option("──────────", ""); sep.disabled = true; s.append(sep);
+  all.filter(a => !first.includes(a)).forEach(a => s.append(new Option(a, a)));
+  s.value = st.assoc;
+}
+function fillGender() {
+  const s = $("gender"); s.replaceChildren();
+  const avail = new Set(TEAMS.filter(t => !st.assoc || t.assoc === st.assoc).map(t => t.g));
+  s.append(new Option("Girls and boys", ""));
+  [["G", "Girls"], ["B", "Boys"]].forEach(([v, label]) => {
+    const o = new Option(label + (avail.has(v) ? "" : " (none)"), v); o.disabled = !avail.has(v); s.append(o);
+  });
+  if (st.gender && !avail.has(st.gender)) st.gender = "";
+  s.value = st.gender;
+}
+function fillTeam() {
+  const s = $("team"); s.replaceChildren(new Option("All teams", ""));
+  const list = TEAMS.filter(t => (!st.assoc || t.assoc === st.assoc) && (!st.gender || t.g === st.gender))
+    .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+  if (st.gender) {
+    list.forEach(t => s.append(new Option(t.name, t.key)));
+  } else {
+    ["G", "B"].forEach(g => {
+      const items = list.filter(t => t.g === g); if (!items.length) return;
+      const og = document.createElement("optgroup"); og.label = GEN[g];
+      items.forEach(t => og.append(new Option(t.name, t.key))); s.append(og);
+    });
+  }
+  if (st.team && !list.some(t => t.key === st.team)) st.team = "";
+  s.value = st.team;
+}
+
+function divLabel(code) {
+  return GEN[code[0]] + " Div " + code[1] + (code[2] ? " · Pool " + code[2] : "");
+}
+function stage(m) {
+  if (m.rnd === "SF1" || m.rnd === "SF2") return "Semi-final";
+  if (m.rnd === "C") return "Placing match";
+  if (m.rnd === "F") return /Loser/.test(m.b) ? "Placing match" : "Final";
+  if (m.a.startsWith("Ladder")) return "Ladder play-off";
+  return "Round " + m.rnd;
+}
+
+let lastSig = null;
+function sig(now) { return MATCHES.filter(m => m.t + SLOT * MS <= now).length + "/" + MATCHES.filter(m => m.t <= now).length; }
+
+function render() {
+  const now = sydneyNow();
+  lastSig = sig(now);
+  const active = !!(st.assoc || st.gender || st.team);
+  const sel = matchingTeams();
+  const keys = new Set(sel.map(t => t.key));
+  const byTeam = MATCHES.filter(m => {
+    if (!active) return true;
+    if (!m.ph) return keys.has(m.div[0] + "|" + m.a) || keys.has(m.div[0] + "|" + m.b);
+    return sel.some(t => t.pool === m.div || t.division === m.div);
+  });
+  const isDone = m => now >= m.t + SLOT * MS;
+  const finishedN = byTeam.filter(isDone).length;
+  const base = byTeam.filter(m => st.finished || !isDone(m))
+    .sort((x, y) => DAY_ORDER.indexOf(x.d) - DAY_ORDER.indexOf(y.d) || x.mins - y.mins || x.court - y.court || x.i - y.i);
+
+  const counts = {}; base.forEach(m => { counts[m.d] = (counts[m.d] || 0) + 1; });
+  if (st.day && !counts[st.day]) st.day = "";
+  const shown = st.day ? base.filter(m => m.d === st.day) : base;
+
+  // Day filter chips
+  const days = $("days"); days.replaceChildren();
+  const mk = (code, label, n) => {
+    const b = el("button", "chip"); b.type = "button"; b.disabled = n === 0;
+    b.append(document.createTextNode(label), el("small", null, n + (n === 1 ? " game" : " games")));
+    b.setAttribute("aria-pressed", String(st.day === code));
+    b.addEventListener("click", () => { st.day = st.day === code ? "" : code; render(); });
+    days.append(b);
+  };
+  mk("", "All", base.length);
+  DAY_ORDER.forEach(d => mk(d, DAYS[d].short, counts[d] || 0));
+  days.firstChild.setAttribute("aria-pressed", String(st.day === ""));
+  days.firstChild.onclick = () => { st.day = ""; render(); };
+
+  // Bar
+  $("clear").hidden = !active && !st.day;
+  const fin = $("fin");
+  fin.hidden = finishedN === 0;
+  fin.textContent = st.finished ? "Hide finished" : "Show " + finishedN + " finished";
+  $("count").textContent = shown.length + (shown.length === 1 ? " match" : " matches") + (st.finished ? "" : " to play");
+
+  const res = $("results"); res.replaceChildren();
+  if (!shown.length) {
+    const e = el("div", "empty");
+    if (!st.finished && finishedN > 0 && !base.length) {
+      e.append(el("strong", null, "All matches for this selection are finished"), el("span", null, "Use “Show finished” to look back at them."));
+    } else {
+      e.append(el("strong", null, "No matches for that selection"), el("span", null, "Try another team or day, or clear the filters."));
+    }
+    res.append(e); return;
+  }
+  for (const d of DAY_ORDER) {
+    const ms = shown.filter(m => m.d === d); if (!ms.length) continue;
+    const sec = el("section", "day");
+    const head = el("div", "dayhead");
+    const h = el("h2", null, DAYS[d].name); h.append(el("small", null, DAYS[d].date));
+    head.append(h, el("span", "n", ms.length + (ms.length === 1 ? " match" : " matches")));
+    const list = el("div", "list");
+    for (const m of ms) list.append(card(m, keys, active, now));
+    sec.append(head, list); res.append(sec);
+  }
+}
+
+function card(m, keys, active, now) {
+  const done = now >= m.t + SLOT * MS, live = !done && now >= m.t;
+  const a = el("article", "m" + (m.ph ? " tbc" : "") + (done ? " done" : ""));
+  const time = el("div", "time"); const [hm, ap] = m.time.split(" ");
+  time.append(el("span", "hm", hm), el("span", "ap", ap));
+  const mid = el("div", "mid"); const teams = el("div", "teams");
+  [[m.a, ""], [m.b, "v"]].forEach(([n, v]) => {
+    const t = byKey.get(m.div[0] + "|" + n);
+    const row = el("div", "team");
+    row.append(el("span", "v", v), el("span", "nm" + (active && t && keys.has(t.key) ? " sel" : ""), n)); teams.append(row);
+  });
+  const meta = el("div", "meta");
+  meta.append(el("span", "dot " + m.div[0]), el("span", null, divLabel(m.div) + " · " + stage(m)));
+  if (live) meta.append(el("span", "tag live", "Playing now"));
+  if (m.ph) meta.append(el("span", "tag", "Teams TBC"));
+  mid.append(teams, meta);
+  const court = el("div", "court"); court.setAttribute("aria-label", "Court " + m.court);
+  court.append(el("span", "l", "Court"), el("span", "n", String(m.court)));
+  a.append(time, mid, court); return a;
+}
+
+$("assoc").addEventListener("change", e => { st.assoc = e.target.value; st.team = ""; fillGender(); fillTeam(); render(); });
+$("gender").addEventListener("change", e => { st.gender = e.target.value; st.team = ""; fillTeam(); render(); });
+$("team").addEventListener("change", e => { st.team = e.target.value; render(); });
+$("fin").addEventListener("click", () => { st.finished = !st.finished; render(); });
+$("clear").addEventListener("click", () => { st.assoc = st.gender = st.team = st.day = ""; fillAssoc(); fillGender(); fillTeam(); render(); });
+
+fillAssoc(); fillGender(); fillTeam(); render();
+// Refresh as matches finish, without disturbing scroll when nothing changed.
+setInterval(() => { if (sig(sydneyNow()) !== lastSig) render(); }, 30000);
+</script>
+
+</body>
+</html>
